@@ -1,5 +1,8 @@
 package team5427.frc.robot.subsystems.Cascade.io;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -101,8 +104,8 @@ public class CascadeIOMagicTalon implements CascadeIO {
 
     @Override
     public void setPivotSetpoint(Rotation2d setpoint) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setPivotSetpoint'");
+        pivotMotorMaster.setSetpoint(setpoint.minus(CascadeConstants.kCascadePivotBuffer).getDegrees()
+            > 0 ? CascadeConstants.kCascadePivotBuffer : setpoint);
     }
 
     @Override
@@ -113,14 +116,12 @@ public class CascadeIOMagicTalon implements CascadeIO {
 
     @Override
     public void stopCascadeMotors(boolean stopped) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stopCascadeMotors'");
+        cascadeMotorMaster.setSetpoint(Meters.of(cascadeMotorMaster.getSetpoint()));
     }
 
     @Override
     public void stopPivotMotors(boolean stopped) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'stopPivotMotors'");
+        pivotMotorMaster.setRawVoltage(stopped ? Volts.of(0) : pivotMotorMaster.getTalonFX().getMotorVoltage().getValue());
     }
     
 }

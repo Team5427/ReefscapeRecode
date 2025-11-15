@@ -1,5 +1,8 @@
 package team5427.frc.robot.subsystems.Cascade;
 
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Meters;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.units.measure.Distance;
@@ -36,5 +39,9 @@ public class CascadeSubsystem extends SubsystemBase {
 
     public void setSetpoint(Distance setpoint) {
         this.setpoint = setpoint;
+    }
+
+    public boolean cascadeAtGoal() {
+        return inputs.cascadeMasterDistance.minus(setpoint).in(Meters)<0.1;
     }
 }
