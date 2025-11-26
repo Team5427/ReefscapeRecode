@@ -2,8 +2,12 @@ package team5427.frc.robot.subsystems.Cascade;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.littletonrobotics.junction.Logger;
 import team5427.frc.robot.subsystems.Cascade.io.CascadeIO;
 import team5427.frc.robot.subsystems.Cascade.io.CascadeIOInputsAutoLogged;
@@ -15,7 +19,8 @@ public class CascadeSubsystem extends SubsystemBase {
 
   private static CascadeSubsystem m_instance;
 
-  private Distance setpoint;
+  @Getter @Setter private Distance cascadeSetpoint;
+  @Getter @Setter private Rotation2d pivotSetpoint;
 
   public static CascadeSubsystem getInstance() {
     if (m_instance == null) m_instance = new CascadeSubsystem();
@@ -31,14 +36,12 @@ public class CascadeSubsystem extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Inputs AutoLogged", inputs);
-    io.setCascadeSetpoint(setpoint);
-  }
 
-  public void setSetpoint(Distance setpoint) {
-    this.setpoint = setpoint;
+    io.setCascadeSetpoint(cascadeSetpoint);
+    io.setPivotSetpoint(pivotSetpoint);
   }
 
   public boolean cascadeAtGoal() {
-    return inputs.cascadeHeight.minus(setpoint).in(Meters) < 0.1;
+    return Math.abs(inputs.cascadeHeight.minus(cascadeSetpoint).in(Meters)) < CascadeConstants.kCascadeTolerance.in(Meters);
   }
 }

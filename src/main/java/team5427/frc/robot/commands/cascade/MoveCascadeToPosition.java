@@ -21,7 +21,7 @@ public class MoveCascadeToPosition extends Command {
 
   @Override
   public void execute() {
-    cascade.setSetpoint(distance);
+    cascade.setCascadeSetpoint(distance);
   }
 
   @Override

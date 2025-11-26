@@ -141,7 +141,7 @@ public class CascadeIOMagicTalon implements CascadeIO {
     );
 
     BaseStatusSignal.waitForAll(
-      0.5,
+      0.02,
       cascadeAngularVelocity,
       cascadeAngularAcceleration,
       cascadeMasterMotorCurrent,
@@ -164,6 +164,8 @@ public class CascadeIOMagicTalon implements CascadeIO {
 
     ParentDevice.optimizeBusUtilizationForAll(cascadeMotorMaster.getTalonFX(), cascadeMotorSlave.getTalonFX());
     ParentDevice.optimizeBusUtilizationForAll(pivotMotorMaster.getTalonFX(), pivotMotorSlave.getTalonFX());
+
+    pivotMotorMaster.setEncoderPosition(pivotCANcoder.getPosition().getValueAsDouble());
   }
 
   @Override
