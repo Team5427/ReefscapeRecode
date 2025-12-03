@@ -51,7 +51,7 @@ public class ProngSubsystem extends SubsystemBase {
     io.setWristSetpoint(wristSetpoint);
 
     io.updateInputs(inputsAutoLogged);
-    Logger.processInputs("ProngEffector/Inputs", inputsAutoLogged);
+    Logger.processInputs("ProngEffector", inputsAutoLogged);
     Logger.recordOutput("Has Object", hasObject());
   }
 

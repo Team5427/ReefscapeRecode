@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -18,9 +17,6 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import team5427.frc.robot.subsystems.Cascade.CascadeConstants;
 import team5427.lib.motors.MagicSteelTalonFX;
@@ -63,11 +59,11 @@ public class CascadeIOMagicTalon implements CascadeIO {
     pivotMotorMaster = new MagicSteelTalonFX(CascadeConstants.kPivotMasterId);
     pivotMotorSlave = new MagicSteelTalonFX(CascadeConstants.kPivotSlaveId);
 
-    cascadeMotorMaster.useTorqueCurrentFOC(true);
-    cascadeMotorSlave.useTorqueCurrentFOC(true);
+    cascadeMotorMaster.useTorqueCurrentFOC(false);
+    cascadeMotorSlave.useTorqueCurrentFOC(false);
 
-    pivotMotorMaster.useTorqueCurrentFOC(true);
-    pivotMotorSlave.useTorqueCurrentFOC(true);
+    pivotMotorMaster.useTorqueCurrentFOC(false);
+    pivotMotorSlave.useTorqueCurrentFOC(false);
 
     cascadeMotorMaster.apply(CascadeConstants.kCascadeDriverConfiguration);
     cascadeMotorMaster.talonConfig.ClosedLoopGeneral.ContinuousWrap = false;
@@ -78,7 +74,7 @@ public class CascadeIOMagicTalon implements CascadeIO {
     cascadeMotorSlave.getTalonFX().getConfigurator().apply(cascadeMotorSlave.talonConfig);
 
     cascadeMotorSlave.getTalonFX().setControl(
-      new Follower(cascadeMotorMaster.getTalonFX().getDeviceID(), false));
+      new Follower(cascadeMotorMaster.getTalonFX().getDeviceID(), true));
 
     pivotMotorMaster.apply(CascadeConstants.kPivotConfiguration);
     pivotMotorMaster.talonConfig.ClosedLoopGeneral.ContinuousWrap = false;

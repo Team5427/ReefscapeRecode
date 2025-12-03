@@ -35,7 +35,7 @@ public class CascadeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Inputs AutoLogged", inputs);
+    Logger.processInputs("Cascade", inputs);
 
     io.setCascadeSetpoint(cascadeSetpoint);
     io.setPivotSetpoint(pivotSetpoint);
