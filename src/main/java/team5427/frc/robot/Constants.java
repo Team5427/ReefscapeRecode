@@ -24,7 +24,7 @@ import java.util.Optional;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final String kCanivoreBusName = "canivore_bus_name";
+  public static final String kCanivoreBusName = "brook";
   public static final double kOdometryFrequency =
       new CANBus(Constants.kCanivoreBusName).isNetworkFD() ? 250.0 : 100.0;
 

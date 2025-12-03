@@ -19,8 +19,8 @@ public class CascadeSubsystem extends SubsystemBase {
 
   private static CascadeSubsystem m_instance;
 
-  @Getter @Setter private Distance cascadeSetpoint;
-  @Getter @Setter private Rotation2d pivotSetpoint;
+  @Getter @Setter private Distance cascadeSetpoint = CascadeConstants.kStowDistance;
+  @Getter @Setter private Rotation2d pivotSetpoint = CascadeConstants.kStowRotation;
 
   public static CascadeSubsystem getInstance() {
     if (m_instance == null) m_instance = new CascadeSubsystem();
