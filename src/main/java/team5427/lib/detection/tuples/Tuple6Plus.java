@@ -4,28 +4,28 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Tuple5Plus<R, T, A, B, C> implements TuplePlus {
+public class Tuple6Plus<R, T, A, B, C, D> implements TuplePlus {
   public R r;
   public T t;
   public A a;
   public B b;
   public C c;
+  public D d;
   Object[] array;
   List<Object> list;
 
-  public Tuple5Plus(R r, T t, A a, B b, C c) {
+  public Tuple6Plus(R r, T t, A a, B b, C c, D d) {
     this.r = r;
     this.t = t;
     this.a = a;
     this.b = b;
-    this.c = c;
 
-    array = new Object[] {r, t, a, b, c};
+    array = new Object[] {r, t, a, b, c, d};
     list = new LinkedList<Object>(Arrays.asList(array));
   }
 
   public String toString() {
-    return r.toString() + t.toString() + a.toString() + b.toString() + c.toString();
+    return r.toString() + t.toString() + a.toString() + b.toString() + c.toString() + d.toString();
   }
 
   @Override
