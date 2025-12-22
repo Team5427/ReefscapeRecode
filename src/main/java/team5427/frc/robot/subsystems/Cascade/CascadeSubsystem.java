@@ -26,7 +26,7 @@ public class CascadeSubsystem extends SubsystemBase {
     return m_instance;
   }
 
-  public CascadeSubsystem() {
+  private CascadeSubsystem() {
     io = new CascadeIOMagicTalon();
     inputs = new CascadeIOInputsAutoLogged();
   }

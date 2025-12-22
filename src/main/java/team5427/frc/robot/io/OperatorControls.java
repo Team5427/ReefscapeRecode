@@ -1,14 +1,17 @@
 package team5427.frc.robot.io;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import team5427.frc.robot.Constants.DriverConstants;
 import team5427.frc.robot.Superstructure;
 import team5427.frc.robot.Superstructure.GamePieceMode;
+import team5427.frc.robot.Superstructure.GamePieceMode.GamePieceTriggers;
 import team5427.frc.robot.Superstructure.ProngStates;
 import team5427.frc.robot.commands.ResetSubsystems;
 import team5427.frc.robot.commands.cascade.MoveCascadeAll;
-import team5427.frc.robot.commands.prong.EjectCoral;
+import team5427.frc.robot.commands.climb.Climb;
+import team5427.frc.robot.commands.prong.EjectGamePiece;
 import team5427.frc.robot.commands.prong.MoveProngAll;
 import team5427.frc.robot.commands.prong.RollerVelocity;
 import team5427.frc.robot.commands.prong.RotateWrist;
@@ -41,28 +44,85 @@ public class OperatorControls {
                 () -> {
                   Superstructure.kSelectedProngState = ProngStates.IDLE;
                 }));
+    joy.a()
+        .onTrue(
+            new ConditionalCommand(
+                new MoveCascadeAll(CascadeConstants.kL1Distance, CascadeConstants.kL1Rotation),
+                new MoveCascadeAll(
+                    CascadeConstants.kProcessorDistance, CascadeConstants.kProcessorRotation),
+                GamePieceTriggers.kCoral))
+        .onTrue(
+            new ConditionalCommand(
+                new RotateWrist(ProngConstants.kL1Rotation),
+                new RotateWrist(ProngConstants.kProcessorPosition),
+                GamePieceTriggers.kCoral));
     joy.x()
-        .onTrue(new MoveCascadeAll(CascadeConstants.kL2Distance, CascadeConstants.kL2Rotation))
-        .onTrue(new RotateWrist(ProngConstants.kL2Rotation));
+        .onTrue(
+            new ConditionalCommand(
+                new MoveCascadeAll(CascadeConstants.kL2Distance, CascadeConstants.kL2Rotation),
+                new MoveCascadeAll(
+                    CascadeConstants.kLowReefAlgaeDistance, CascadeConstants.kLowReefAlgaeRotation),
+                GamePieceTriggers.kCoral))
+        .onTrue(
+            new ConditionalCommand(
+                new RotateWrist(ProngConstants.kL2Rotation),
+                new MoveProngAll(
+                    ProngConstants.kAlgaeReefIntakeVelocity, ProngConstants.kLowReefAlgaeRotation),
+                GamePieceTriggers.kCoral));
     joy.b()
-        .onTrue(new MoveCascadeAll(CascadeConstants.kL3Distance, CascadeConstants.kL3Rotation))
-        .onTrue(new RotateWrist(ProngConstants.kL3Rotation));
+        .onTrue(
+            new ConditionalCommand(
+                new MoveCascadeAll(CascadeConstants.kL3Distance, CascadeConstants.kL3Rotation),
+                new MoveCascadeAll(
+                    CascadeConstants.kHighReefAlgaeDistance,
+                    CascadeConstants.kHighReefAlgaeRotation),
+                GamePieceTriggers.kCoral))
+        .onTrue(
+            new ConditionalCommand(
+                new RotateWrist(ProngConstants.kL3Rotation),
+                new MoveProngAll(
+                    ProngConstants.kAlgaeReefIntakeVelocity, ProngConstants.kHighReefAlgaeRotation),
+                GamePieceTriggers.kCoral));
     joy.y()
-        .onTrue(new MoveCascadeAll(CascadeConstants.kL4Distance, CascadeConstants.kL4Rotation))
-        .onTrue(new RotateWrist(ProngConstants.kL4Rotation));
+        .onTrue(
+            new ConditionalCommand(
+                new MoveCascadeAll(CascadeConstants.kL4Distance, CascadeConstants.kL4Rotation),
+                new MoveCascadeAll(
+                    CascadeConstants.kBargeDistance, CascadeConstants.kBargeRotation),
+                GamePieceTriggers.kCoral))
+        .onTrue(
+            new ConditionalCommand(
+                new RotateWrist(ProngConstants.kL4Rotation),
+                new RotateWrist(ProngConstants.kBargePosition),
+                GamePieceTriggers.kCoral));
 
     joy.leftTrigger()
         .whileTrue(
-            new MoveCascadeAll(
-                CascadeConstants.kRSCIntakeDistance, CascadeConstants.kIntakeRotation))
+            new ConditionalCommand(
+                new MoveCascadeAll(
+                    CascadeConstants.kRSCIntakeDistance, CascadeConstants.kIntakeRotation),
+                new MoveCascadeAll(
+                    CascadeConstants.kFloorIntakeDistance, CascadeConstants.kFloorIntakeRotation),
+                GamePieceTriggers.kCoral))
         .whileTrue(
-            new MoveProngAll(ProngConstants.kCoralIntakeVelocity, ProngConstants.kIntakePosition))
-        .onFalse(new ResetSubsystems());
+            new ConditionalCommand(
+                new MoveCascadeAll(
+                    CascadeConstants.kRSCIntakeDistance, CascadeConstants.kIntakeRotation),
+                new MoveCascadeAll(
+                    CascadeConstants.kFloorIntakeDistance, CascadeConstants.kFloorIntakeRotation),
+                GamePieceTriggers.kCoral))
+        .onFalse(new ConditionalCommand(new ResetSubsystems(), null, GamePieceTriggers.kCoral));
     joy.rightTrigger()
-        .whileTrue(new EjectCoral())
-        .onFalse(new RollerVelocity(ProngConstants.kStowVelocity));
+        .whileTrue(new EjectGamePiece())
+        .onFalse(
+            new ConditionalCommand(
+                new RollerVelocity(ProngConstants.kStowVelocity),
+                new RollerVelocity(ProngConstants.kAlgaeFloorIntakeVelocity),
+                GamePieceTriggers.kCoral));
 
     joy.povDown().onTrue(new ResetSubsystems());
+
+    joy.povUp().onTrue(new Climb());
 
     joy.povLeft()
         .onTrue(

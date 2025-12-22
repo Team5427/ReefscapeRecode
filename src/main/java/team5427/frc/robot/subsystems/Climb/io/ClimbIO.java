@@ -1,0 +1,31 @@
+package team5427.frc.robot.subsystems.Climb.io;
+
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
+import org.littletonrobotics.junction.AutoLog;
+
+public interface ClimbIO {
+  @AutoLog
+  public static class ClimbIOInputs {
+    public Rotation2d hookPosition = new Rotation2d();
+    public AngularVelocity hookVelocity = RotationsPerSecond.of(0);
+    public AngularAcceleration hookAcceleration = RotationsPerSecondPerSecond.of(0);
+
+    public Current hookCurrent = Amps.of(0);
+    public Voltage hookVoltage = Volts.of(0);
+  }
+
+  public void updateInputs(ClimbIOInputs inputs);
+
+  public void setHookSetpoint(Rotation2d setpoint);
+
+  public void setHookPosition(Rotation2d angle);
+}

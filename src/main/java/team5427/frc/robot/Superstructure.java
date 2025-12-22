@@ -63,7 +63,7 @@ public final class Superstructure {
 
   public static SwerveStates kSelectedSwerveState = SwerveStates.DISABLED;
 
-  public enum ProngStates {
+  public static enum ProngStates {
     ALGAE_INTAKE,
     ALGAE_OUTAKE,
     CORAL_INTAKE,
@@ -119,7 +119,7 @@ public final class Superstructure {
 
   public static ProngStates kSelectedProngState = ProngStates.DISABLED;
 
-  public enum GamePieceMode {
+  public static enum GamePieceMode {
     CORAL,
     ALGAE;
 
@@ -138,6 +138,38 @@ public final class Superstructure {
   }
 
   public static GamePieceMode kSelectedGamePieceMode = GamePieceMode.CORAL;
+
+  public static enum ClimbStep {
+    RESET,
+    PREP,
+    ACTIVATE,
+    CLIMB;
+
+    public static class ClimbStepTriggers {
+      public static final Trigger kReset =
+          new Trigger(
+              () -> {
+                return KSelectedClimbStep.equals(ClimbStep.RESET);
+              });
+      public static final Trigger kPrep =
+          new Trigger(
+              () -> {
+                return KSelectedClimbStep.equals(ClimbStep.PREP);
+              });
+      public static final Trigger kActivate =
+          new Trigger(
+              () -> {
+                return KSelectedClimbStep.equals(ClimbStep.ACTIVATE);
+              });
+      public static final Trigger kClimb =
+          new Trigger(
+              () -> {
+                return KSelectedClimbStep.equals(ClimbStep.CLIMB);
+              });
+    }
+  }
+
+  public static ClimbStep KSelectedClimbStep = ClimbStep.RESET;
 
   public static void logStates() {
     Logger.recordOutput(dashboardKey + "/" + "SwerveState", kSelectedSwerveState);

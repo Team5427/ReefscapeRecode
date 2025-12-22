@@ -1,6 +1,8 @@
 package team5427.frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import team5427.frc.robot.Superstructure;
+import team5427.frc.robot.Superstructure.ClimbStep;
 import team5427.frc.robot.subsystems.Cascade.CascadeConstants;
 import team5427.frc.robot.subsystems.Cascade.CascadeSubsystem;
 import team5427.frc.robot.subsystems.ProngEffector.ProngConstants;
@@ -18,11 +20,27 @@ public class ResetSubsystems extends Command {
 
   @Override
   public void initialize() {
-    cascadeSubsystem.setCascadeSetpoint(CascadeConstants.kStowDistance);
-    cascadeSubsystem.setPivotSetpoint(CascadeConstants.kStowRotation);
+    switch (Superstructure.kSelectedGamePieceMode) {
+      case CORAL -> {
+        cascadeSubsystem.setCascadeSetpoint(CascadeConstants.kStowDistance);
+        cascadeSubsystem.setPivotSetpoint(CascadeConstants.kStowRotation);
 
-    prongSubsystem.setWristSetpoint(ProngConstants.kStowPosition);
-    prongSubsystem.setRollerVelocity(ProngConstants.kStowVelocity);
+        prongSubsystem.setWristSetpoint(ProngConstants.kStowPosition);
+        prongSubsystem.setRollerVelocity(ProngConstants.kStowVelocity);
+        break;
+      }
+
+      case ALGAE -> {
+        cascadeSubsystem.setCascadeSetpoint(CascadeConstants.kStowDistance);
+        cascadeSubsystem.setPivotSetpoint(CascadeConstants.kStowRotation);
+
+        prongSubsystem.setWristSetpoint(ProngConstants.kAlgaeStowPosition);
+        prongSubsystem.setRollerVelocity(ProngConstants.kAlgaeFloorIntakeVelocity);
+        break;
+      }
+    }
+
+    Superstructure.KSelectedClimbStep = ClimbStep.RESET;
   }
 
   @Override

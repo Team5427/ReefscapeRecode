@@ -28,7 +28,7 @@ public class ProngSubsystem extends SubsystemBase {
     return m_instance;
   }
 
-  public ProngSubsystem() {
+  private ProngSubsystem() {
     io = new ProngIOTalon();
     rollerVelocity = ProngConstants.kStowVelocity;
     wristSetpoint = Rotation2d.kZero;

@@ -1,20 +1,31 @@
 package team5427.frc.robot.commands.prong;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import team5427.frc.robot.Superstructure;
 import team5427.frc.robot.subsystems.ProngEffector.ProngConstants;
 import team5427.frc.robot.subsystems.ProngEffector.ProngSubsystem;
 
-public class EjectCoral extends Command {
+public class EjectGamePiece extends Command {
   private ProngSubsystem prongSubsystem;
 
-  public EjectCoral() {
+  public EjectGamePiece() {
     prongSubsystem = ProngSubsystem.getInstance();
     addRequirements(prongSubsystem);
   }
 
   @Override
   public void initialize() {
-    prongSubsystem.setRollerVelocity(ProngConstants.kCoralScoringVelocity);
+    switch (Superstructure.kSelectedGamePieceMode) {
+      case CORAL -> {
+        prongSubsystem.setRollerVelocity(ProngConstants.kCoralScoringVelocity);
+        break;
+      }
+
+      case ALGAE -> {
+        prongSubsystem.setRollerVelocity(ProngConstants.kAlgaeBargeVelocity);
+        break;
+      }
+    }
   }
 
   @Override
