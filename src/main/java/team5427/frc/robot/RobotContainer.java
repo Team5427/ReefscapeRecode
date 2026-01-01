@@ -4,17 +4,30 @@
 
 package team5427.frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.Logger;
 import team5427.frc.robot.Constants.DriverConstants;
+import team5427.frc.robot.commands.chassis.MoveChassisToPose;
 import team5427.frc.robot.io.DriverProfiles;
 import team5427.frc.robot.io.OperatorControls;
 import team5427.frc.robot.io.PilotingControls;
+import team5427.frc.robot.subsystems.Swerve.DrivingConstants;
 import team5427.frc.robot.subsystems.Swerve.SwerveSubsystem;
 import team5427.frc.robot.subsystems.vision.VisionSubsystem;
 import team5427.frc.robot.subsystems.vision.io.QuestNav;
@@ -26,6 +39,9 @@ import team5427.frc.robot.subsystems.vision.io.QuestNav;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private SendableChooser<Command> autoChooser;
+  private SendableChooser<Boolean> isFlipped;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -59,6 +75,24 @@ public class RobotContainer {
         () -> RobotPose.getInstance().getAdaptivePose(),
         () -> RobotPose.getInstance().getGyroHeading());
     QuestNav.getInstance().setPose(new Pose2d(10 * Math.random(), 4, Rotation2d.kZero));
+
+    AutoBuilder.configure(
+      RobotPose.getInstance()::getAdaptivePose, 
+      RobotPose.getInstance()::resetAllPose, 
+      SwerveSubsystem.getInstance()::getCurrentChassisSpeeds, 
+      (speeds) -> SwerveSubsystem.getInstance().setInputSpeeds(speeds), 
+      new PPHolonomicDriveController(
+        new PIDConstants(DrivingConstants.kTranslationalKp.get(), 0.0, 0.0), 
+        new PIDConstants(DrivingConstants.kRotationKp.get(), 0.0, 0.0)
+      ), 
+      Constants.config, 
+      () -> {return DriverStation.getAlliance().isEmpty()&&DriverStation.getAlliance().get() == Alliance.Red;}, 
+      SwerveSubsystem.getInstance()
+    );
+
+    autoChooser();
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     buttonBindings();
   }
@@ -105,5 +139,34 @@ public class RobotContainer {
         "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
     Logger.recordOutput(
         "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+  }
+
+  public void autoChooser() {
+    SendableChooser<Boolean> chooser = new SendableChooser<>();
+    chooser.setDefaultOption("Not Flipped", false);
+    chooser.addOption("Flipped", true);
+
+    SmartDashboard.putData(chooser);
+    chooser.onChange(
+        (Boolean flip) -> {
+          autoChooser =
+              AutoBuilder.buildAutoChooserWithOptionsModifier(
+                  autoStream ->
+                      autoStream.map(
+                          auto -> {
+                            auto = new PathPlannerAuto(auto.getName(), flip);
+                            return auto;
+                          }));
+          SmartDashboard.putData("Auto Chooser", autoChooser);
+        });
+
+    autoChooser =
+        AutoBuilder.buildAutoChooserWithOptionsModifier(
+            autoStream ->
+                autoStream.map(
+                    auto -> {
+                      auto = new PathPlannerAuto(auto.getName(), chooser.getSelected());
+                      return auto;
+                    }));
   }
 }
